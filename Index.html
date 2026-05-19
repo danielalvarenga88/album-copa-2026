@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Álbum Copa 26"/>
+<meta name="theme-color" content="#0d0d1a"/>
+<title>Álbum Copa 2026</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d0d1a'/><text y='68' x='50' text-anchor='middle' font-size='55'>⚽</text></svg>"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --bg:#0d0d1a;--bg2:#111122;--bg3:#1a1a2e;--bg4:#16213e;
+    --red:#e94560;--red2:#c0392b;--gold:#f5a623;--green:#4ade80;--blue:#60a5fa;--purple:#a78bfa;--pink:#f472b6;
+    --text:#fff;--text2:#aaa;--text3:#666;--text4:#444;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.04);
+  }
+  html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden;}
+  #app{display:flex;flex-direction:column;height:100%;height:100dvh;}
+  #header{background:linear-gradient(135deg,var(--bg3),var(--bg4));padding:12px 16px 10px;border-bottom:1px solid rgba(233,69,96,0.2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:max(12px,env(safe-area-inset-top));}
+  #header .title{font-size:1.15rem;font-weight:700;letter-spacing:.5px;}
+  #header .subtitle{font-size:.65rem;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;}
+  #header .pct{font-size:1.5rem;font-weight:800;color:var(--red);line-height:1;}
+  #header .pct-sub{font-size:.65rem;color:var(--text3);text-align:right;}
+  #tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
+  #tabs button{flex:1;padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  #tabs button.active{color:var(--red);border-bottom-color:var(--red);}
+  #tabs button .ti{font-size:1.05rem;}
+  #content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px;padding-bottom:max(14px,env(safe-area-inset-bottom));}
+  .card{background:var(--border2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .card-title{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600;}
+  .prog-wrap{background:rgba(255,255,255,0.08);border-radius:99px;height:10px;overflow:hidden;}
+  .prog-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--gold));transition:width .8s ease;}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .metric{background:var(--border2);border:1px solid var(--border);border-radius:10px;padding:12px;}
+  .metric-val{font-size:1.35rem;font-weight:800;line-height:1;}
+  .metric-lbl{font-size:.65rem;color:var(--text3);margin-top:3px;}
+  .env-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .env-btn{background:rgba(233,69,96,0.12);border:1px solid rgba(233,69,96,0.25);color:var(--red);border-radius:8px;padding:9px 14px;cursor:pointer;font-size:.85rem;font-weight:700;}
+  .env-btn:active{background:rgba(233,69,96,0.3);}
+  .env-input{width:56px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 8px;font-size:.85rem;text-align:center;}
+  .env-ok{background:var(--red);border:none;color:#fff;border-radius:8px;padding:9px 14px;cursor:pointer;font-size:.85rem;font-weight:700;}
+  .log-item{font-size:.75rem;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+  .log-c{color:var(--green);}.log-r{color:var(--gold);}
+  .btn-undo{margin-top:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text3);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:.72rem;}
+  #sel-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:12px;height:calc(100dvh - 145px);}
+  #sel-list{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #sel-list .inner{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .grp-label{grid-column:1/-1;font-size:.6rem;color:var(--red);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;padding:6px 2px 2px;border-top:1px solid rgba(233,69,96,0.15);margin-top:4px;}
+  .grp-label:first-child{border-top:none;margin-top:0;}
+  .sel-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:9px 10px;cursor:pointer;transition:all .2s;}
+  .sel-card.active{background:rgba(233,69,96,0.12);border-color:rgba(233,69,96,0.4);}
+  .sel-card .flag{font-size:1.3rem;}
+  .sel-card .sname{font-size:.65rem;color:var(--text2);font-weight:600;margin:2px 0 1px;}
+  .sel-card .scode{font-size:.58rem;color:var(--text4);letter-spacing:.5px;margin-bottom:4px;}
+  .sel-mini-prog{background:rgba(255,255,255,0.08);border-radius:99px;height:3px;overflow:hidden;}
+  .sel-mini-bar{height:100%;border-radius:99px;background:var(--red);transition:width .5s;}
+  .sel-mini-bar.done{background:var(--green);}
+  .sel-count{font-size:.6rem;color:var(--text4);margin-top:2px;}
+  #fig-panel{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:12px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .fig-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .fig-flag{font-size:1.8rem;}
+  .fig-name{font-size:1rem;font-weight:700;}
+  .fig-sub{font-size:.68rem;color:var(--text3);}
+  .fig-desc{font-size:.62rem;color:var(--text4);margin-top:2px;}
+  .fig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:5px;}
+  .fig-item{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:7px 4px;text-align:center;cursor:pointer;transition:all .15s;position:relative;user-select:none;touch-action:none;-webkit-user-select:none;}
+  .fig-item.colada{background:linear-gradient(135deg,var(--red),var(--red2));border-color:transparent;}
+  .fig-item.repetida{border:2px solid var(--gold);}
+  .fig-item.colada .fig-num{color:#fff;}
+  .fig-item .fig-num{font-size:.72rem;font-weight:700;color:var(--text4);}
+  .rep-badge{position:absolute;top:-5px;right:-5px;background:var(--gold);color:#000;border-radius:50%;width:14px;height:14px;font-size:.55rem;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .lp-ring{position:absolute;inset:-3px;border-radius:10px;border:2px solid transparent;pointer-events:none;}
+  .fig-item.pressing .lp-ring{border-color:var(--blue);animation:lp-fill .55s linear forwards;}
+  @keyframes lp-fill{0%{box-shadow:inset 0 0 0 0 rgba(96,165,250,0);}100%{box-shadow:inset 0 0 0 30px rgba(96,165,250,0.25);}}
+  .fig-legend{font-size:.65rem;color:var(--text4);margin-top:8px;}
+  .empty-panel{color:var(--text4);padding:30px 16px;text-align:center;font-size:.85rem;line-height:1.6;}
+  .ia-info{background:rgba(233,69,96,0.06);border:1px solid rgba(233,69,96,0.18);border-radius:12px;padding:14px;margin-bottom:14px;}
+  .ia-info-title{font-size:.72rem;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .ia-info p{font-size:.8rem;color:var(--text3);line-height:1.7;}.ia-info span{color:var(--text);}
+  .ia-row{display:flex;gap:6px;margin-bottom:10px;}
+  .ia-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 14px;font-size:.9rem;outline:none;}
+  .ia-input:focus{border-color:rgba(233,69,96,0.4);}
+  .ia-mic{background:rgba(233,69,96,0.12);border:1px solid rgba(233,69,96,0.3);color:var(--red);border-radius:10px;padding:12px 14px;cursor:pointer;font-size:1.1rem;transition:all .2s;}
+  .ia-mic.listening{background:var(--red);color:#fff;animation:pulse 1s infinite;}
+  .ia-send{background:var(--red);border:none;color:#fff;border-radius:10px;padding:12px 18px;cursor:pointer;font-size:.9rem;font-weight:700;}
+  .ia-send:disabled{opacity:.5;}
+  .ia-resp{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:.88rem;color:var(--text2);line-height:1.6;}
+  .ia-resp strong{color:var(--red);}
+  .ia-listen-hint{text-align:center;color:var(--red);font-size:.8rem;padding:8px;animation:pulse 1s infinite;}
+  .rel-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+  .rel-item{background:var(--border2);border-radius:8px;padding:10px;}
+  .rel-lbl{font-size:.68rem;color:var(--text3);}
+  .rel-val{font-size:.9rem;font-weight:700;color:var(--text);margin-top:2px;}
+  .btn-pdf{background:linear-gradient(135deg,var(--red),var(--red2));border:none;color:#fff;border-radius:12px;padding:14px;cursor:pointer;font-size:.95rem;font-weight:700;width:100%;letter-spacing:.5px;margin-bottom:6px;}
+  .btn-pdf:active{opacity:.85;}
+  .proj-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;}
+  .proj-lbl{font-size:.8rem;color:var(--text3);}.proj-val{font-size:.88rem;font-weight:700;}
+  .bk-row{display:flex;gap:8px;margin-bottom:10px;}
+  .bk-btn{flex:1;padding:12px 8px;border-radius:10px;border:none;cursor:pointer;font-size:.82rem;font-weight:700;transition:all .15s;}
+  .bk-btn:active{opacity:.8;}
+  .bk-save{background:linear-gradient(135deg,#4ade80,#22c55e);color:#000;}
+  .bk-backup{background:linear-gradient(135deg,var(--blue),#3b82f6);color:#fff;}
+  .bk-restore{background:linear-gradient(135deg,var(--gold),#d97706);color:#000;}
+  .bk-info{font-size:.7rem;color:var(--text4);text-align:center;margin-top:4px;padding:4px;}
+  #restore-input{display:none;}
+  #notif{position:fixed;top:max(16px,env(safe-area-inset-top));right:14px;z-index:9999;border-radius:10px;padding:10px 14px;font-size:.82rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,0.5);transform:translateY(-80px);transition:transform .3s ease;pointer-events:none;}
+  #notif.show{transform:translateY(0);}
+  #notif.success{background:var(--green);color:#000;}
+  #notif.warn{background:var(--gold);color:#000;}
+  #notif.error{background:var(--red);color:#fff;}
+  #lp-hint{position:fixed;bottom:max(80px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:rgba(96,165,250,0.92);color:#000;border-radius:20px;padding:6px 16px;font-size:.75rem;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;z-index:9998;}
+  #lp-hint.show{opacity:1;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:#222;border-radius:3px;}
+  @media(max-width:500px){#sel-layout{grid-template-columns:1fr;height:auto;}#sel-list{max-height:240px;}#fig-panel{max-height:320px;}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div><div class="title">⚽ Copa 2026</div><div class="subtitle">Gerenciador Panini</div></div>
+    <div><div class="pct" id="h-pct">0.0%</div><div class="pct-sub" id="h-count">0 / 980</div></div>
+  </div>
+  <div id="tabs">
+    <button class="active" onclick="switchTab('dashboard')"><span class="ti">📊</span>Início</button>
+    <button onclick="switchTab('selecoes')"><span class="ti">🌍</span>Seleções</button>
+    <button onclick="switchTab('repetidas')"><span class="ti">🔁</span>Repetidas</button>
+    <button onclick="switchTab('relatorio')"><span class="ti">📄</span>Relatório</button>
+    <button onclick="switchTab('dados')"><span class="ti">💾</span>Dados</button>
+  </div>
+  <div id="content">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard">
+      <!-- Barra de progresso principal -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px">
+          <div>
+            <div style="font-size:2.4rem;font-weight:800;color:var(--red);line-height:1" id="d-pct">0.0%</div>
+            <div style="font-size:.72rem;color:var(--text3);margin-top:2px">do álbum completo (oficial)</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:1.1rem;font-weight:700" id="d-unicas">0<span style="color:var(--text4);font-size:.8rem">/980</span></div>
+            <div style="font-size:.68rem;color:var(--text3)">figurinhas únicas</div>
+          </div>
+        </div>
+        <div class="prog-wrap"><div class="prog-bar" id="d-bar" style="width:0%"></div></div>
+      </div>
+
+      <!-- Métricas 2×3 -->
+      <div class="metrics" style="margin-bottom:10px">
+        <div class="metric"><div class="metric-val" style="color:var(--blue)" id="m-faltam">980</div><div class="metric-lbl">Faltam</div></div>
+        <div class="metric" style="cursor:pointer" onclick="switchTab('repetidas')">
+          <div class="metric-val" style="color:var(--gold)" id="m-reps">0</div>
+          <div class="metric-lbl">Repetidas <span style="font-size:.55rem;opacity:.6">↗ ver lista</span></div>
+        </div>
+        <div class="metric"><div class="metric-val" style="color:var(--purple)" id="m-env">0</div><div class="metric-lbl">Envelopes abertos</div></div>
+        <div class="metric"><div class="metric-val" style="color:var(--green)" id="m-gasto">R$ 0,00</div><div class="metric-lbl">Total gasto</div></div>
+        <div class="metric"><div class="metric-val" style="color:var(--pink)" id="m-efic">—</div><div class="metric-lbl">Eficiência</div></div>
+        <div class="metric"><div class="metric-val" style="color:var(--gold)" id="m-proj">—</div><div class="metric-lbl">Projeção final</div></div>
+      </div>
+
+      <!-- Double check -->
+      <div class="card">
+        <div class="card-title">🔢 Double Check — Envelopes × Figurinhas</div>
+        <div id="dcheck"></div>
+      </div>
+
+      <!-- Registrar envelopes -->
+      <div class="card">
+        <div class="card-title">Registrar Envelopes Abertos</div>
+        <div class="env-row">
+          <button class="env-btn" onclick="regEnv(1)">+1</button>
+          <button class="env-btn" onclick="regEnv(2)">+2</button>
+          <button class="env-btn" onclick="regEnv(3)">+3</button>
+          <button class="env-btn" onclick="regEnv(5)">+5</button>
+          <button class="env-btn" onclick="regEnv(10)">+10</button>
+          <input class="env-input" id="env-custom" type="number" min="1" value="1"/>
+          <button class="env-ok" onclick="regEnvCustom()">OK</button>
+        </div>
+      </div>
+
+      <!-- Log de ações -->
+      <div class="card" id="log-card" style="display:none">
+        <div class="card-title">Últimas ações</div>
+        <div id="log-list"></div>
+        <button class="btn-undo" onclick="desfazer()">↩ Desfazer última</button>
+      </div>
+    </div>
+
+    <!-- SELEÇÕES -->
+    <div id="tab-selecoes" style="display:none">
+      <div id="sel-layout">
+        <div id="sel-list">
+          <div style="font-size:.68rem;color:var(--text4);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Selecione uma seção</div>
+          <div class="inner" id="sel-grid"></div>
+        </div>
+        <div id="fig-panel"><div class="empty-panel">👆 Toque em uma<br>seção para ver<br>as figurinhas</div></div>
+      </div>
+    </div>
+
+    <!-- REPETIDAS -->
+    <div id="tab-repetidas" style="display:none">
+      <div id="tab-repetidas-content"></div>
+    </div>
+
+    <!-- RELATÓRIO -->
+    <div id="tab-relatorio" style="display:none">
+      <!-- Resumo -->
+      <div class="card">
+        <div class="card-title">📊 Resumo do álbum</div>
+        <div class="rel-grid" id="rel-grid"></div>
+      </div>
+
+      <!-- PDFs -->
+      <div class="card">
+        <div class="card-title">🖨️ Relatórios para Impressão (PDF)</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn-pdf" onclick="gerarPDF('completo')" style="background:linear-gradient(135deg,#0f3460,#1a1a2e)">
+            📋 Progresso completo por seção
+          </button>
+          <button class="btn-pdf" onclick="gerarPDF('repetidas')" style="background:linear-gradient(135deg,#d97706,#92400e)">
+            🔁 Somente figurinhas repetidas
+          </button>
+          <button class="btn-pdf" onclick="gerarPDF('faltantes')" style="background:linear-gradient(135deg,#e94560,#c0392b)">
+            ❌ Somente figurinhas faltantes
+          </button>
+        </div>
+        <div style="font-size:.68rem;color:var(--text4);text-align:center;margin-top:8px">Abre nova aba pronta para Ctrl+P / Compartilhar → Imprimir</div>
+      </div>
+
+      <!-- Exportar JSON -->
+      <div class="card">
+        <div class="card-title">📤 Exportar listas (arquivo JSON)</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn-pdf" onclick="exportarLista('todas')" style="background:linear-gradient(135deg,var(--purple),#6d28d9)">
+            📦 Todas as figurinhas (com status)
+          </button>
+          <button class="btn-pdf" onclick="exportarLista('coladas')" style="background:linear-gradient(135deg,var(--green),#16a34a)">
+            ✅ Somente coladas
+          </button>
+          <button class="btn-pdf" onclick="exportarLista('repetidas')" style="background:linear-gradient(135deg,var(--gold),#b45309)">
+            🔁 Somente repetidas (com quantidade)
+          </button>
+          <button class="btn-pdf" onclick="exportarLista('faltantes')" style="background:linear-gradient(135deg,var(--red),var(--red2))">
+            ❌ Somente faltantes
+          </button>
+        </div>
+        <div style="font-size:.68rem;color:var(--text4);text-align:center;margin-top:8px">Formato JSON · compatível com planilhas e outros apps</div>
+      </div>
+
+      <!-- Projeções -->
+      <div class="card">
+        <div class="card-title">📈 Projeção de Conclusão do Álbum</div>
+        <div class="proj-row"><span class="proj-lbl">Sem repetidas (cenário ideal)</span><span class="proj-val" style="color:var(--green)">R$ 980,00</span></div>
+        <div class="proj-row"><span class="proj-lbl">Com trocas em grupo grande</span><span class="proj-val" style="color:var(--blue)">R$ 1.200–1.400</span></div>
+        <div class="proj-row"><span class="proj-lbl">Com trocas entre 2 pessoas</span><span class="proj-val" style="color:var(--gold)">R$ 4.000–5.000</span></div>
+        <div class="proj-row" style="border:none"><span class="proj-lbl">Sem trocas (pior caso)</span><span class="proj-val" style="color:var(--red)">R$ 7.000–10.000</span></div>
+        <div style="font-size:.62rem;color:var(--text4);margin-top:8px">Fonte: Matemático Frederico Torres / CBN · valores aproximados</div>
+      </div>
+
+      <!-- Assistente IA (movido para dentro de relatório como subtab acessível) -->
+      <div class="card">
+        <div class="card-title">🤖 Assistente por voz / texto</div>
+        <div class="ia-row">
+          <input class="ia-input" id="ia-input" placeholder="Ex: colei 5 e 12 do Brasil..." onkeydown="if(event.key==='Enter')enviarIA()"/>
+          <button class="ia-mic" id="ia-mic" onclick="toggleVoz()">🎙️</button>
+          <button class="ia-send" id="ia-send" onclick="enviarIA()">Enviar</button>
+        </div>
+        <div id="ia-listen" style="display:none" class="ia-listen-hint">🎙️ Ouvindo...</div>
+        <div id="ia-resp" style="display:none" class="ia-resp"></div>
+      </div>
+    </div>
+
+    <!-- DADOS -->
+    <div id="tab-dados" style="display:none">
+      <div class="card">
+        <div class="card-title">🔍 Dados salvos neste contexto</div>
+        <div style="font-size:.78rem;color:var(--text3);margin-bottom:10px;line-height:1.6">
+          Se seus dados aparecerem abaixo, clique em <strong>Restaurar</strong>.
+        </div>
+        <div id="diag-lista"><div style="color:var(--text4);font-size:.8rem">Carregando...</div></div>
+        <button onclick="diagStorage()" style="margin-top:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text2);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:.78rem;width:100%">🔄 Atualizar</button>
+      </div>
+      <div class="card">
+        <div class="card-title">💾 Salvar & Backup</div>
+        <div class="bk-row"><button class="bk-btn bk-save" onclick="salvarLocal()">✅ Salvar agora</button></div>
+        <div class="bk-row"><button class="bk-btn bk-backup" onclick="exportarBackup()">📥 Exportar backup (.json)</button></div>
+        <div class="bk-row"><button class="bk-btn bk-restore" onclick="document.getElementById('restore-input').click()">📤 Importar backup</button></div>
+        <input type="file" id="restore-input" accept=".json" onchange="importarBackup(event)"/>
+        <div class="bk-info" id="bk-info">Salvamento automático ativo</div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 Status</div>
+        <div class="rel-grid" id="dados-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--red)">⚠️ Zona de perigo</div>
+        <div style="font-size:.78rem;color:var(--text3);margin-bottom:12px">Apaga tudo permanentemente. Exporte um backup antes.</div>
+        <button onclick="zerarDados()" style="background:rgba(233,69,96,0.12);border:1px solid rgba(233,69,96,0.3);color:var(--red);border-radius:8px;padding:10px 16px;cursor:pointer;font-size:.82rem;font-weight:700;width:100%">🗑️ Apagar todos os dados</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div id="notif"></div>
+<div id="lp-hint">Segure para reverter</div>
+
+<script>
+
+// ─── CONSTANTES ───────────────────────────────────────────────────────────────
+var ENV_P=7.0, FIG_P=ENV_P/7;
+var SK='copa2026_v2';
+var CHAVES=['copa2026_v2','copa2026_v1','copa2026_album'];
+
+var SELECOES=[
+  {id:'FWC',nome:'FIFA World Cup 2026',grupo:'Intro',total:20,f:'🏆',desc:'FWC-1 a FWC-20: emblema, mascotes, slogan, bola, sedes e momentos históricos'},
+  {id:'CC',nome:'Coca-Cola',grupo:'Pat',total:14,f:'🥤',desc:'14 figurinhas destacáveis do rótulo Coca‑Cola',
+   jogs:{1:'Alphonso Davies',2:'Raúl Jiménez',3:'Enner Valencia',4:'Federico Valverde',5:'Jefferson Lerma',6:'Harry Kane',7:'Joško Gvardiol',8:'Joshua Kimmich',9:'Gabriel Magalhães',10:'Lamine Yamal',11:'Lautaro Martínez',12:'Virgil van Dijk',13:'Santiago Giménez',14:'Emiliano Martínez'}},
+  {id:'MEX',nome:'México',grupo:'A',total:20,f:'🇲🇽'},
+  {id:'RSA',nome:'África do Sul',grupo:'A',total:20,f:'🇿🇦'},
+  {id:'KOR',nome:'Coreia do Sul',grupo:'A',total:20,f:'🇰🇷'},
+  {id:'CZE',nome:'Rep. Tcheca',grupo:'A',total:20,f:'🇨🇿'},
+  {id:'CAN',nome:'Canadá',grupo:'B',total:20,f:'🇨🇦'},
+  {id:'BIH',nome:'Bósnia e Herzegovina',grupo:'B',total:20,f:'🇧🇦'},
+  {id:'QAT',nome:'Qatar',grupo:'B',total:20,f:'🇶🇦'},
+  {id:'SUI',nome:'Suíça',grupo:'B',total:20,f:'🇨🇭'},
+  {id:'BRA',nome:'Brasil',grupo:'C',total:20,f:'🇧🇷'},
+  {id:'MAR',nome:'Marrocos',grupo:'C',total:20,f:'🇲🇦'},
+  {id:'HAI',nome:'Haiti',grupo:'C',total:20,f:'🇭🇹'},
+  {id:'SCO',nome:'Escócia',grupo:'C',total:20,f:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},
+  {id:'USA',nome:'Estados Unidos',grupo:'D',total:20,f:'🇺🇸'},
+  {id:'PAR',nome:'Paraguai',grupo:'D',total:20,f:'🇵🇾'},
+  {id:'AUS',nome:'Austrália',grupo:'D',total:20,f:'🇦🇺'},
+  {id:'TUR',nome:'Turquia',grupo:'D',total:20,f:'🇹🇷'},
+  {id:'GER',nome:'Alemanha',grupo:'E',total:20,f:'🇩🇪'},
+  {id:'CUW',nome:'Curaçao',grupo:'E',total:20,f:'🇨🇼'},
+  {id:'CIV',nome:'Costa do Marfim',grupo:'E',total:20,f:'🇨🇮'},
+  {id:'ECU',nome:'Equador',grupo:'E',total:20,f:'🇪🇨'},
+  {id:'NED',nome:'Holanda',grupo:'F',total:20,f:'🇳🇱'},
+  {id:'JPN',nome:'Japão',grupo:'F',total:20,f:'🇯🇵'},
+  {id:'SWE',nome:'Suécia',grupo:'F',total:20,f:'🇸🇪'},
+  {id:'TUN',nome:'Tunísia',grupo:'F',total:20,f:'🇹🇳'},
+  {id:'BEL',nome:'Bélgica',grupo:'G',total:20,f:'🇧🇪'},
+  {id:'EGY',nome:'Egito',grupo:'G',total:20,f:'🇪🇬'},
+  {id:'IRN',nome:'Irã',grupo:'G',total:20,f:'🇮🇷'},
+  {id:'NZL',nome:'Nova Zelândia',grupo:'G',total:20,f:'🇳🇿'},
+  {id:'ESP',nome:'Espanha',grupo:'H',total:20,f:'🇪🇸'},
+  {id:'CPV',nome:'Cabo Verde',grupo:'H',total:20,f:'🇨🇻'},
+  {id:'SAU',nome:'Arábia Saudita',grupo:'H',total:20,f:'🇸🇦'},
+  {id:'URU',nome:'Uruguai',grupo:'H',total:20,f:'🇺🇾'},
+  {id:'FRA',nome:'França',grupo:'I',total:20,f:'🇫🇷'},
+  {id:'SEN',nome:'Senegal',grupo:'I',total:20,f:'🇸🇳'},
+  {id:'IRQ',nome:'Iraque',grupo:'I',total:20,f:'🇮🇶'},
+  {id:'NOR',nome:'Noruega',grupo:'I',total:20,f:'🇳🇴'},
+  {id:'ARG',nome:'Argentina',grupo:'J',total:20,f:'🇦🇷'},
+  {id:'ALG',nome:'Argélia',grupo:'J',total:20,f:'🇩🇿'},
+  {id:'AUT',nome:'Áustria',grupo:'J',total:20,f:'🇦🇹'},
+  {id:'JOR',nome:'Jordânia',grupo:'J',total:20,f:'🇯🇴'},
+  {id:'POR',nome:'Portugal',grupo:'K',total:20,f:'🇵🇹'},
+  {id:'COD',nome:'RD Congo',grupo:'K',total:20,f:'🇨🇩'},
+  {id:'UZB',nome:'Uzbequistão',grupo:'K',total:20,f:'🇺🇿'},
+  {id:'COL',nome:'Colômbia',grupo:'K',total:20,f:'🇨🇴'},
+  {id:'ENG',nome:'Inglaterra',grupo:'L',total:20,f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},
+  {id:'CRO',nome:'Croácia',grupo:'L',total:20,f:'🇭🇷'},
+  {id:'GHA',nome:'Gana',grupo:'L',total:20,f:'🇬🇭'},
+  {id:'PAN',nome:'Panamá',grupo:'L',total:20,f:'🇵🇦'},
+];
+
+var GRP={Intro:'🏆 Introdução & Especiais',Pat:'🤝 Patrocinador',A:'Grupo A',B:'Grupo B',C:'Grupo C',D:'Grupo D',E:'Grupo E',F:'Grupo F',G:'Grupo G',H:'Grupo H',I:'Grupo I',J:'Grupo J',K:'Grupo K',L:'Grupo L'};
+var TOTAL=SELECOES.filter(function(s){return s.grupo!=='Pat';}).reduce(function(a,s){return a+s.total;},0); // 980
+var TOTAL_CC=SELECOES.filter(function(s){return s.grupo==='Pat';}).reduce(function(a,s){return a+s.total;},0); // 14
+
+// ─── STORAGE ──────────────────────────────────────────────────────────────────
+function wsOk(){try{return typeof window!=='undefined'&&!!window.storage&&typeof window.storage.get==='function';}catch(e){return false;}}
+function parse(raw){
+  if(!raw)return null;
+  try{var d=typeof raw==='string'?JSON.parse(raw):raw;var x=d.dados||d;if(x&&typeof x.coladas==='object')return x;}catch(e){}return null;
+}
+async function wsGet(k){if(!wsOk())return null;try{var r=await window.storage.get(k);return(r&&r.value)?r.value:null;}catch(e){return null;}}
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+async function salvar(d){
+  var j=JSON.stringify(d);
+  if(wsOk())try{await window.storage.set(SK,j);}catch(e){}
+  try{localStorage.setItem(SK,j);}catch(e){}
+}
+
+var DB={coladas:{},repetidas:{},envelopes:0,log:[],ultimoSalvo:null};
+
+async function iniciar(){
+  var enc=null;
+  for(var i=0;i<CHAVES.length&&!enc;i++){var d=parse(await wsGet(CHAVES[i]));if(d)enc={d:d,k:CHAVES[i]};}
+  if(!enc){for(var i=0;i<CHAVES.length&&!enc;i++){var d=parse(lsGet(CHAVES[i]));if(d)enc={d:d,k:CHAVES[i]};}}
+  if(enc){
+    var d=enc.d;
+    DB={coladas:d.coladas||{},repetidas:d.repetidas||{},envelopes:d.envelopes||0,log:d.log||[],ultimoSalvo:d.ultimoSalvo||null};
+    if(enc.k!==SK)await salvar(DB);
+  }
+  ui();diagStorage();
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────────
+function stats(){
+  var uOf=Object.keys(DB.coladas).filter(function(k){return DB.coladas[k]&&!k.startsWith('CC-');}).length;
+  var uCC=Object.keys(DB.coladas).filter(function(k){return DB.coladas[k]&&k.startsWith('CC-');}).length;
+  var reps=Object.values(DB.repetidas).reduce(function(a,b){return a+b;},0);
+  var pct=(uOf/TOTAL*100).toFixed(1);
+  var gasto=DB.envelopes*ENV_P;
+  var faltam=TOTAL-uOf;
+  var proj=gasto+(faltam*FIG_P*3.2);
+  var compradas=DB.envelopes*7;
+  var registradas=uOf+uCC+reps;
+  return{uOf:uOf,uCC:uCC,reps:reps,pct:pct,gasto:gasto,faltam:faltam,proj:proj,
+    compradas:compradas,registradas:registradas,diff:compradas-registradas,
+    efic:registradas>0?(((uOf+uCC)/registradas)*100).toFixed(1):'—'};
+}
+
+// ─── UI ───────────────────────────────────────────────────────────────────────
+function el(id){return document.getElementById(id);}
+
+function ui(){
+  var s=stats();
+  // Header e barra
+  ['h-pct','d-pct'].forEach(function(id){if(el(id))el(id).textContent=s.pct+'%';});
+  if(el('h-count'))el('h-count').textContent=s.uOf+' / '+TOTAL;
+  if(el('d-unicas'))el('d-unicas').innerHTML=s.uOf+'<span style="color:var(--text4);font-size:.8rem">/'+TOTAL+'</span>';
+  if(el('d-bar'))el('d-bar').style.width=s.pct+'%';
+  // Métricas
+  if(el('m-faltam'))el('m-faltam').textContent=s.faltam;
+  if(el('m-reps'))el('m-reps').textContent=s.reps;
+  if(el('m-env'))el('m-env').textContent=DB.envelopes;
+  if(el('m-gasto'))el('m-gasto').textContent='R$ '+s.gasto.toFixed(2).replace('.',',');
+  if(el('m-efic'))el('m-efic').textContent=s.efic!=='—'?s.efic+'%':'—';
+  if(el('m-proj'))el('m-proj').textContent=s.uOf>0?'R$ '+s.proj.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,'.'):'—';
+  // Double check
+  uiDoubleCheck(s);
+  // Log
+  uiLog();
+  // Relatório e dados
+  uiRelatorio(s);
+  uiDados(s);
+}
+
+function uiDoubleCheck(s){
+  var dc=el('dcheck');if(!dc)return;
+  var ok=s.diff===0;
+  var cor=ok?'var(--green)':s.diff>0?'var(--gold)':'var(--red)';
+  var msg=ok?'✅ Confere exatamente!':s.diff>0?'⚠️ '+s.diff+' figurinha(s) sem registro':'❌ '+Math.abs(s.diff)+' a mais que os envelopes';
+  dc.innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">'
+      +'<div style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2);border-radius:10px;padding:10px;text-align:center">'
+        +'<div style="font-size:1.3rem;font-weight:800;color:var(--blue)">'+s.compradas+'</div>'
+        +'<div style="font-size:.62rem;color:var(--text3);margin-top:2px;line-height:1.3">Compradas<br>(env×7)</div></div>'
+      +'<div style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:10px;text-align:center">'
+        +'<div style="font-size:1.3rem;font-weight:800;color:var(--purple)">'+s.registradas+'</div>'
+        +'<div style="font-size:.62rem;color:var(--text3);margin-top:2px;line-height:1.3">Registradas<br>(col+rep+CC)</div></div>'
+      +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px;text-align:center">'
+        +'<div style="font-size:1.3rem;font-weight:800;color:'+cor+'">'+s.diff+'</div>'
+        +'<div style="font-size:.62rem;color:var(--text3);margin-top:2px;line-height:1.3">Diferença</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(0,0,0,0.25);border-radius:8px;padding:10px;font-size:.82rem;font-weight:700;color:'+cor+';text-align:center">'+msg+'</div>'
+    +(s.diff!==0?'<div style="font-size:.68rem;color:var(--text3);margin-top:6px;text-align:center">'
+        +(s.diff>0?'Você tem '+s.diff+' figurinhas não lançadas. Registre como colada ou repetida.':'Há mais registros do que figurinhas compradas. Verifique os envelopes.')
+      +'</div>':'')
+    +'<div style="font-size:.6rem;color:var(--text4);margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px">'
+      +'Col. oficiais: '+s.uOf+' · CC: '+s.uCC+' · Repetidas: '+s.reps
+    +'</div>';
+}
+
+function uiLog(){
+  var log=DB.log.slice(0,6);
+  var lc=el('log-card');
+  if(log.length>0){
+    lc.style.display='block';
+    el('log-list').innerHTML=log.map(function(l){
+      return '<div class="log-item '+(l.tipo==='colada'?'log-c':'log-r')+'">'+(l.tipo==='colada'?'✓ Colada':'⚡ Repetida')+': '+l.key
+        +' <span style="color:var(--text4);font-size:.68rem;margin-left:4px">'+new Date(l.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</span></div>';
+    }).join('');
+  }else lc.style.display='none';
+}
+
+function uiRelatorio(s){
+  var rg=el('rel-grid');if(!rg)return;
+  var cu=s.uOf>0&&DB.envelopes>0?(s.gasto/s.uOf).toFixed(2).replace('.',','):'—';
+  rg.innerHTML=[
+    ['Progresso oficial',s.pct+'%'],['Coladas oficiais',s.uOf+'/'+TOTAL],
+    ['Coladas Coca-Cola',s.uCC+'/'+TOTAL_CC],['Total repetidas',s.reps],
+    ['Envelopes abertos',DB.envelopes],['Total investido','R$ '+s.gasto.toFixed(2).replace('.',',')],
+    ['Custo/figura única','R$ '+cu],['Projeção conclusão',s.uOf>0?'R$ '+s.proj.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,'.'):' —'],
+  ].map(function(x){return '<div class="rel-item"><div class="rel-lbl">'+x[0]+'</div><div class="rel-val">'+x[1]+'</div></div>';}).join('');
+}
+
+function uiDados(s){
+  var dg=el('dados-grid');if(!dg)return;
+  var sc=SELECOES.filter(function(x){return (x.id==='FWC'?Array.from({length:x.total},function(_,i){return i;}):Array.from({length:x.total},function(_,i){return i+1;})).every(function(n){return DB.coladas[x.id+'-'+n];});}).length;
+  dg.innerHTML=[
+    ['Total oficial (sem CC)',TOTAL],['Figurinhas CC (extras)',TOTAL_CC],
+    ['Seções 100% completas',sc+'/'+SELECOES.length],
+    ['Último salvo',DB.ultimoSalvo?new Date(DB.ultimoSalvo).toLocaleString('pt-BR'):'—'],
+  ].map(function(x){return '<div class="rel-item"><div class="rel-lbl">'+x[0]+'</div><div class="rel-val">'+x[1]+'</div></div>';}).join('');
+  var bi=el('bk-info');
+  if(bi)bi.textContent=DB.ultimoSalvo?'Último salvo: '+new Date(DB.ultimoSalvo).toLocaleString('pt-BR'):'Salvamento automático ativo';
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(t){
+  ['dashboard','selecoes','repetidas','relatorio','dados'].forEach(function(id,i){
+    document.querySelectorAll('#tabs button')[i].classList.toggle('active',id===t);
+    var e=el('tab-'+id);if(e)e.style.display=id===t?'block':'none';
+  });
+  if(t==='selecoes')renderSel();
+  if(t==='repetidas')renderRepetidas();
+  if(t==='relatorio'||t==='dados'){ui();if(t==='dados')diagStorage();}
+}
+
+// ─── SELEÇÕES ─────────────────────────────────────────────────────────────────
+var selAtiva=null;
+
+function renderSel(){
+  var html='',grp='';
+  SELECOES.forEach(function(s){
+    if(s.grupo!==grp){grp=s.grupo;html+='<div class="grp-label">'+(GRP[grp]||grp)+'</div>';}
+    var nums=s.id==='FWC'
+      ?Array.from({length:s.total},function(_,i){return i;})
+      :Array.from({length:s.total},function(_,i){return i+1;});
+    var col=nums.filter(function(n){return DB.coladas[s.id+'-'+n];}).length;
+    var pct=(col/s.total*100).toFixed(0);
+    html+='<div class="sel-card'+(selAtiva&&selAtiva.id===s.id?' active':'')+'" onclick="selecionarSel(\''+s.id+'\')">'
+      +'<div class="flag">'+s.f+'</div><div class="sname">'+s.nome+'</div><div class="scode">'+s.id+'</div>'
+      +'<div class="sel-mini-prog"><div class="sel-mini-bar'+(pct==100?' done':'')+'" style="width:'+pct+'%"></div></div>'
+      +'<div class="sel-count">'+col+'/'+s.total+'</div></div>';
+  });
+  el('sel-grid').innerHTML=html;
+}
+
+function selecionarSel(id){selAtiva=SELECOES.find(function(s){return s.id===id;});renderSel();renderFig();}
+
+function renderFig(){
+  var p=el('fig-panel');
+  if(!selAtiva){p.innerHTML='<div class="empty-panel">👆 Toque em uma<br>seção para ver<br>as figurinhas</div>';return;}
+  var s=selAtiva;
+  var grpLabel=s.grupo==='Intro'?'Seção Especial':s.grupo==='Pat'?'Patrocinador':'Grupo '+s.grupo;
+  var isCC=(s.id==='CC');
+  var isPAN0=(s.id==='FWC'); // FWC vai de 00 a 19
+  var nums=isPAN0?Array.from({length:s.total},function(_,i){return i;}):Array.from({length:s.total},function(_,i){return i+1;});
+  var figs=nums.map(function(n){
+    var key=s.id+'-'+n,col=!!DB.coladas[key],rep=DB.repetidas[key]||0;
+    var labelTxt=isPAN0?(n===0?'00':String(n)):isCC&&s.jogs&&s.jogs[n]?s.jogs[n]:String(n);
+    var labelStyle=isCC&&s.jogs&&s.jogs[n]?'font-size:.5rem;line-height:1.2':'';
+    var label='<div class="fig-num" style="color:'+(col?'#fff':'var(--text4)')+(labelStyle?';'+labelStyle:'')+'">'
+      +labelTxt+'</div>';
+    return '<div class="fig-item'+(col?' colada':'')+(rep>0?' repetida':'')+'"'
+      +' data-sel="'+s.id+'" data-num="'+n+'"'
+      +' ontouchstart="lpStart(event,this)" ontouchend="lpEnd(event,this)" ontouchcancel="lpCancel(this)"'
+      +' onmousedown="lpStart(event,this)" onmouseup="lpEnd(event,this)" onmouseleave="lpCancel(this)"'
+      +' oncontextmenu="return false"'+(isCC?' style="min-height:52px;"':'')
+      +' title="'+(isCC&&s.jogs&&s.jogs[n]?'CC'+n+' — '+s.jogs[n]:s.id+'-'+(isPAN0?'00':n))+'">'
+      +label+(rep>0?'<div class="rep-badge">'+rep+'</div>':'')+'<div class="lp-ring"></div></div>';
+  }).join('');
+  p.innerHTML='<div class="fig-header"><span class="fig-flag">'+s.f+'</span><div>'
+    +'<div class="fig-name">'+s.nome+'</div>'
+    +'<div class="fig-sub">'+s.id+' · '+grpLabel+' · '+s.total+' figurinhas</div>'
+    +(s.desc?'<div class="fig-desc">'+s.desc+'</div>':'')
+    +'</div></div><div class="fig-grid">'+figs+'</div>'
+    +'<div class="fig-legend">Toque: registrar · Segurar (0,5s): reverter</div>';
+}
+
+// ─── LONG PRESS ───────────────────────────────────────────────────────────────
+// Usa threshold de movimento para não ativar ao rolar a página
+var lpTimer=null,lpFired=false,lpStartX=0,lpStartY=0,lpMoved=false;
+var LP_MS=500, LP_MOVE=8; // milissegundos e pixels de tolerância
+
+function lpStart(e,el2){
+  var touch=e.touches?e.touches[0]:e;
+  lpStartX=touch.clientX;lpStartY=touch.clientY;lpMoved=false;lpFired=false;
+  el2.classList.add('pressing');showHint(true);
+  lpTimer=setTimeout(function(){
+    if(lpMoved){el2.classList.remove('pressing');showHint(false);return;}
+    lpFired=true;el2.classList.remove('pressing');showHint(false);
+    if(navigator.vibrate)navigator.vibrate(40);
+    reverterFig(el2.dataset.sel,+el2.dataset.num);
+  },LP_MS);
+}
+function lpMove(e){
+  if(!lpTimer)return;
+  var touch=e.touches?e.touches[0]:e;
+  var dx=Math.abs(touch.clientX-lpStartX),dy=Math.abs(touch.clientY-lpStartY);
+  if(dx>LP_MOVE||dy>LP_MOVE){
+    lpMoved=true;
+    if(lpTimer){clearTimeout(lpTimer);lpTimer=null;}
+    document.querySelectorAll('.fig-item.pressing').forEach(function(x){x.classList.remove('pressing');});
+    showHint(false);
+  }
+}
+function lpEnd(e,el2){
+  if(lpTimer){clearTimeout(lpTimer);lpTimer=null;}
+  el2.classList.remove('pressing');showHint(false);
+  if(!lpFired&&!lpMoved)toggleFig(el2.dataset.sel,+el2.dataset.num);
+  lpFired=false;lpMoved=false;
+}
+function lpCancel(el2){
+  if(lpTimer){clearTimeout(lpTimer);lpTimer=null;}
+  el2.classList.remove('pressing');showHint(false);lpFired=false;lpMoved=false;
+}
+document.addEventListener('touchmove',lpMove,{passive:true});
+document.addEventListener('mousemove',lpMove);
+
+var hintTimer=null;
+function showHint(show){
+  var h=el('lp-hint');
+  if(show){h.classList.add('show');if(hintTimer){clearTimeout(hintTimer);hintTimer=null;}}
+  else{hintTimer=setTimeout(function(){h.classList.remove('show');},300);}
+}
+
+// ─── FIGURINHAS ───────────────────────────────────────────────────────────────
+async function toggleFig(selId,num){
+  var key=selId+'-'+num;
+  if(!DB.coladas[key]){
+    DB.coladas[key]=1;DB.log=[{tipo:'colada',key:key,ts:Date.now()}].concat(DB.log.slice(0,99));
+    notify('Colada: '+key+' ✓','success');
+  }else{
+    DB.repetidas[key]=(DB.repetidas[key]||0)+1;DB.log=[{tipo:'repetida',key:key,ts:Date.now()}].concat(DB.log.slice(0,99));
+    notify('Repetida: '+key,'warn');
+  }
+  await salvar(DB);ui();renderFig();renderSel();
+}
+
+async function reverterFig(selId,num){
+  var key=selId+'-'+num,col=!!DB.coladas[key],rep=DB.repetidas[key]||0;
+  if(!col&&rep===0){notify('Já está em branco','warn');return;}
+  if(rep>0){var v=rep-1;if(v<=0){delete DB.repetidas[key];}else{DB.repetidas[key]=v;}
+    var idx=DB.log.findIndex(function(l){return l.tipo==='repetida'&&l.key===key;});if(idx!==-1)DB.log.splice(idx,1);
+    notify('Repetida removida: '+key,'warn');
+  }else{delete DB.coladas[key];
+    var idx=DB.log.findIndex(function(l){return l.tipo==='colada'&&l.key===key;});if(idx!==-1)DB.log.splice(idx,1);
+    notify('Revertida: '+key,'warn');
+  }
+  await salvar(DB);ui();renderFig();renderSel();
+}
+
+// ─── ABA REPETIDAS ────────────────────────────────────────────────────────────
+function renderRepetidas(){
+  var p=el('tab-repetidas-content');if(!p)return;
+  var itens=[];
+  Object.keys(DB.repetidas).forEach(function(key){
+    if(DB.repetidas[key]>0){
+      var parts=key.split('-'),id=parts[0],num=parseInt(parts[1]);
+      var sec=SELECOES.find(function(s){return s.id===id;});
+      var nome=sec?(sec.id==='CC'&&sec.jogs&&sec.jogs[num]?sec.jogs[num]:'#'+num):num;
+      itens.push({key:key,id:id,num:num,qtd:DB.repetidas[key],f:sec?sec.f:'❓',sel:sec?sec.nome:id,nome:nome});
+    }
+  });
+  itens.sort(function(a,b){return b.qtd-a.qtd||a.key.localeCompare(b.key);});
+  if(!itens.length){
+    p.innerHTML='<div class="card"><div style="text-align:center;padding:30px;color:var(--text4);font-size:.9rem">🎉 Nenhuma repetida registrada!</div></div>';
+    return;
+  }
+  var total=itens.reduce(function(a,x){return a+x.qtd;},0);
+  var html='<div class="card" style="margin-bottom:10px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+    +'<span style="font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600">Suas Repetidas</span>'
+    +'<span style="font-size:.75rem;color:var(--gold);font-weight:700">'+total+' cópias · '+itens.length+' figurinhas</span>'
+    +'</div></div>';
+  itens.forEach(function(it){
+    html+='<div class="card" style="padding:10px 12px">'
+      +'<div style="display:flex;align-items:center;gap:10px">'
+        +'<span style="font-size:1.4rem">'+it.f+'</span>'
+        +'<div style="flex:1">'
+          +'<div style="font-size:.8rem;font-weight:700;color:var(--text)">'+it.sel+'</div>'
+          +'<div style="font-size:.7rem;color:var(--text3)">'+it.key+' — '+it.nome+'</div>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:6px">'
+          +'<button onclick="ajustarRep(\''+it.key+'\',\''+it.id+'\','+it.num+',-1)" style="background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.3);color:var(--red);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:1rem;font-weight:700">−</button>'
+          +'<span style="min-width:24px;text-align:center;font-size:1rem;font-weight:800;color:var(--gold)">'+it.qtd+'</span>'
+          +'<button onclick="ajustarRep(\''+it.key+'\',\''+it.id+'\','+it.num+',+1)" style="background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.3);color:var(--gold);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:1rem;font-weight:700">+</button>'
+        +'</div>'
+      +'</div></div>';
+  });
+  p.innerHTML=html;
+}
+
+async function ajustarRep(key,selId,num,delta){
+  var rep=DB.repetidas[key]||0;
+  var novo=rep+delta;
+  if(novo<0)return;
+  if(novo===0){delete DB.repetidas[key];}else{DB.repetidas[key]=novo;}
+  var tipo=delta>0?'repetida':'colada'; // log aproximado
+  DB.log=[{tipo:tipo,key:key,ts:Date.now()}].concat(DB.log.slice(0,99));
+  await salvar(DB);ui();renderRepetidas();
+  notify(delta>0?'Repetida adicionada: '+key:'Repetida removida: '+key,delta>0?'warn':'success');
+}
+
+// ─── ENVELOPES / DESFAZER ─────────────────────────────────────────────────────
+async function regEnv(q){DB.envelopes+=q;await salvar(DB);ui();notify(q+' envelope(s) registrado(s)','success');}
+function regEnvCustom(){var q=parseInt(el('env-custom').value)||1;if(q>0)regEnv(q);}
+async function desfazer(){
+  if(!DB.log.length)return;
+  var u=DB.log[0];DB.log=DB.log.slice(1);
+  if(u.tipo==='colada'){delete DB.coladas[u.key];}
+  else{var v=(DB.repetidas[u.key]||1)-1;if(v<=0){delete DB.repetidas[u.key];}else{DB.repetidas[u.key]=v;}}
+  await salvar(DB);ui();if(selAtiva)renderFig();notify('Última ação desfeita','warn');
+}
+
+// ─── BACKUP ───────────────────────────────────────────────────────────────────
+async function salvarLocal(){DB.ultimoSalvo=Date.now();await salvar(DB);ui();notify('Dados salvos ✓','success');}
+
+async function exportarBackup(){
+  DB.ultimoSalvo=Date.now();await salvar(DB);
+  var s=stats();
+  var payload={versao:'copa2026_v2',exportado:new Date().toISOString(),progresso:{oficiais:s.uOf,total:TOTAL,pct:s.pct+'%'},dados:DB};
+  baixarJSON(JSON.stringify(payload,null,2),'album-copa-2026-backup-'+hoje()+'.json');
+  ui();notify('Backup exportado!','success');
+}
+
+function importarBackup(event){
+  var file=event.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=async function(e){
+    try{
+      var payload=JSON.parse(e.target.result);
+      var dados=payload.dados||payload;
+      if(!dados.coladas){notify('Arquivo inválido','error');return;}
+      if(!confirm('Restaurar? Isso substituirá os dados atuais.'))return;
+      DB={coladas:dados.coladas||{},repetidas:dados.repetidas||{},envelopes:dados.envelopes||0,log:dados.log||[],ultimoSalvo:Date.now()};
+      await salvar(DB);ui();if(selAtiva){renderFig();renderSel();}notify('Restaurado ✓','success');
+    }catch(err){notify('Erro ao ler o arquivo','error');}
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+async function zerarDados(){
+  if(!confirm('Apagar todos os dados permanentemente?'))return;
+  DB={coladas:{},repetidas:{},envelopes:0,log:[],ultimoSalvo:null};
+  await salvar(DB);ui();selAtiva=null;renderFig();renderSel();notify('Dados apagados','warn');
+}
+
+// ─── RELATÓRIOS PDF/JSON ──────────────────────────────────────────────────────
+function hoje(){return new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');}
+function baixarJSON(json,nome){
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=nome;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+// Exportar lista de figurinhas (JSON) por tipo
+function exportarLista(tipo){
+  var s=stats();
+  var lista=[];
+  SELECOES.forEach(function(sec){
+    Array.from({length:sec.total},function(_,i){return i+1;}).forEach(function(n){
+      var key=sec.id+'-'+n;
+      var colada=!!DB.coladas[key];
+      var reps=DB.repetidas[key]||0;
+      var nomeFig=sec.id==='CC'&&sec.jogs&&sec.jogs[n]?sec.jogs[n]:'#'+n;
+      var grpLabel=sec.grupo==='Intro'?'Especial':sec.grupo==='Pat'?'Coca-Cola':'Grupo '+sec.grupo;
+      var item={codigo:key,selecao:sec.nome,grupo:grpLabel,figurinha:nomeFig,colada:colada,repetidas:reps};
+      if(tipo==='todas')lista.push(item);
+      else if(tipo==='coladas'&&colada)lista.push(item);
+      else if(tipo==='repetidas'&&reps>0)lista.push(item);
+      else if(tipo==='faltantes'&&!colada)lista.push(item);
+    });
+  });
+  var payload={tipo:tipo,gerado:new Date().toISOString(),progresso:{coladas:s.uOf,total:TOTAL,pct:s.pct+'%'},total:lista.length,itens:lista};
+  baixarJSON(JSON.stringify(payload,null,2),'album-copa-2026-'+tipo+'-'+hoje()+'.json');
+  notify('Exportado: '+lista.length+' figurinhas ('+tipo+')','success');
+}
+
+function gerarPDF(tipo){
+  var s=stats();
+  var now=new Date().toLocaleDateString('pt-BR');
+
+  // Montar linhas conforme tipo
+  var rows='';
+  var titulo='';
+  if(tipo==='completo'){
+    titulo='Progresso Completo';
+    rows=SELECOES.map(function(x){
+      var col=(x.id==='FWC'?Array.from({length:x.total},function(_,i){return i;}):Array.from({length:x.total},function(_,i){return i+1;})).filter(function(n){return DB.coladas[x.id+'-'+n];}).length;
+      var rep=(x.id==='FWC'?Array.from({length:x.total},function(_,i){return i;}):Array.from({length:x.total},function(_,i){return i+1;})).reduce(function(a,n){return a+(DB.repetidas[x.id+'-'+n]||0);},0);
+      var grp=x.grupo==='Intro'?'Especial':x.grupo==='Pat'?'Coca-Cola':'Grupo '+x.grupo;
+      return '<tr><td>'+x.f+' '+x.nome+'</td><td>'+x.id+'</td><td>'+grp+'</td>'
+        +'<td>'+col+'/'+x.total+'</td><td style="color:'+(col===x.total?'#4ade80':'inherit')+'">'+(col/x.total*100).toFixed(0)+'%</td><td>'+rep+'</td></tr>';
+    }).join('');
+  }else if(tipo==='repetidas'){
+    titulo='Figurinhas Repetidas';
+    var itens=[];
+    Object.keys(DB.repetidas).forEach(function(key){
+      if(DB.repetidas[key]>0){
+        var parts=key.split('-'),id=parts[0],num=parseInt(parts[1]);
+        var sec=SELECOES.find(function(s){return s.id===id;});
+        var nomeFig=sec&&sec.id==='CC'&&sec.jogs&&sec.jogs[num]?sec.jogs[num]:'#'+num;
+        var grp=sec?(sec.grupo==='Intro'?'Especial':sec.grupo==='Pat'?'Coca-Cola':'Grupo '+sec.grupo):'?';
+        itens.push({key:key,f:sec?sec.f:'❓',nome:sec?sec.nome:id,grp:grp,fig:nomeFig,qtd:DB.repetidas[key]});
+      }
+    });
+    itens.sort(function(a,b){return b.qtd-a.qtd;});
+    rows=itens.map(function(it){
+      return '<tr><td>'+it.f+' '+it.nome+'</td><td>'+it.key+'</td><td>'+it.grp+'</td><td>'+it.fig+'</td>'
+        +'<td style="color:#f5a623;font-weight:700;text-align:center">'+it.qtd+'×</td></tr>';
+    }).join('');
+  }else if(tipo==='faltantes'){
+    titulo='Figurinhas Faltantes';
+    SELECOES.forEach(function(sec){
+      Array.from({length:sec.total},function(_,i){return i+1;}).forEach(function(n){
+        if(!DB.coladas[sec.id+'-'+n]){
+          var grp=sec.grupo==='Intro'?'Especial':sec.grupo==='Pat'?'Coca-Cola':'Grupo '+sec.grupo;
+          var nomeFig=sec.id==='CC'&&sec.jogs&&sec.jogs[n]?sec.jogs[n]:'#'+n;
+          rows+='<tr><td>'+sec.f+' '+sec.nome+'</td><td>'+sec.id+'-'+n+'</td><td>'+grp+'</td><td>'+nomeFig+'</td></tr>';
+        }
+      });
+    });
+  }
+
+  var isFaltantes=tipo==='faltantes';
+  var isRepetidas=tipo==='repetidas';
+
+  var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><title>'+titulo+' — Álbum Copa 2026</title>'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,sans-serif;color:#1a1a2e;}'
+    +'.hdr{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:24px 28px;}'
+    +'.hdr h1{font-size:1.6rem;letter-spacing:1px;}.hdr p{opacity:.7;font-size:.8rem;margin-top:4px;}'
+    +'.badge{display:inline-block;background:#e94560;color:#fff;padding:3px 12px;border-radius:20px;font-size:.7rem;margin-top:6px;}'
+    +'.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px 28px;}'
+    +'.c{background:#f5f7ff;border:1px solid #dde3f5;border-radius:8px;padding:12px;text-align:center;}'
+    +'.c .v{font-size:1.4rem;font-weight:800;color:#e94560;}.c .l{font-size:.6rem;color:#666;text-transform:uppercase;margin-top:2px;}'
+    +'.pw{background:#eee;border-radius:99px;height:10px;overflow:hidden;margin:6px 28px 4px;}'
+    +'.pb{background:linear-gradient(90deg,#e94560,#f5a623);height:100%;border-radius:99px;}'
+    +'.sec{padding:12px 28px;}'
+    +'.sec h2{font-size:.9rem;color:#0f3460;border-bottom:2px solid #e94560;padding-bottom:4px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}'
+    +'table{width:100%;border-collapse:collapse;font-size:.75rem;}thead tr{background:#0f3460;color:#fff;}'
+    +'thead th{padding:8px 6px;text-align:left;}tbody tr:nth-child(even){background:#f4f6ff;}'
+    +'tbody td{padding:6px;border-bottom:1px solid #e5e9f5;}'
+    +'.ftr{background:#1a1a2e;color:#777;text-align:center;padding:10px;font-size:.65rem;margin-top:16px;}'
+    +'@media print{body{print-color-adjust:exact;-webkit-print-color-adjust:exact;}}</style></head><body>'
+    +'<div class="hdr"><h1>⚽ ÁLBUM COPA DO MUNDO 2026 — '+titulo.toUpperCase()+'</h1>'
+    +'<p>Gerado em '+now+'</p><span class="badge">Panini FIFA World Cup 2026™</span></div>';
+
+  // Cards de resumo só no relatório completo
+  if(tipo==='completo'){
+    html+='<div class="cards">'
+      +'<div class="c"><div class="v">'+s.uOf+'</div><div class="l">Coladas oficiais</div></div>'
+      +'<div class="c"><div class="v">'+s.pct+'%</div><div class="l">Progresso</div></div>'
+      +'<div class="c"><div class="v">'+s.faltam+'</div><div class="l">Faltam</div></div>'
+      +'<div class="c"><div class="v">'+s.reps+'</div><div class="l">Repetidas</div></div>'
+      +'<div class="c"><div class="v">'+DB.envelopes+'</div><div class="l">Envelopes</div></div>'
+      +'<div class="c"><div class="v">R$'+s.gasto.toFixed(0)+'</div><div class="l">Gasto</div></div>'
+      +'<div class="c"><div class="v">'+s.compradas+'</div><div class="l">Figs compradas</div></div>'
+      +'<div class="c"><div class="v">'+s.registradas+'</div><div class="l">Figs registradas</div></div>'
+      +'</div><div class="pw"><div class="pb" style="width:'+s.pct+'%"></div></div>';
+  }else if(tipo==='repetidas'){
+    var totalReps=Object.values(DB.repetidas).reduce(function(a,b){return a+b;},0);
+    var qtdFigs=Object.keys(DB.repetidas).filter(function(k){return DB.repetidas[k]>0;}).length;
+    html+='<div class="cards">'
+      +'<div class="c"><div class="v">'+totalReps+'</div><div class="l">Total cópias</div></div>'
+      +'<div class="c"><div class="v">'+qtdFigs+'</div><div class="l">Figurinhas distintas</div></div>'
+      +'<div class="c"><div class="v">R$'+(totalReps*FIG_P).toFixed(0)+'</div><div class="l">Valor estimado</div></div>'
+      +'<div class="c"><div class="v">'+s.pct+'%</div><div class="l">Álbum completo</div></div>'
+      +'</div>';
+  }else if(tipo==='faltantes'){
+    html+='<div class="cards">'
+      +'<div class="c"><div class="v">'+s.faltam+'</div><div class="l">Faltantes oficiais</div></div>'
+      +'<div class="c"><div class="v">'+s.pct+'%</div><div class="l">Progresso</div></div>'
+      +'<div class="c"><div class="v">R$'+(s.faltam*FIG_P*3.2).toFixed(0)+'</div><div class="l">Custo estimado</div></div>'
+      +'<div class="c"><div class="v">'+DB.envelopes+'</div><div class="l">Envelopes abertos</div></div>'
+      +'</div>';
+  }
+
+  // Tabela
+  html+='<div class="sec"><h2>'+titulo+'</h2><table><thead><tr>';
+  if(tipo==='completo') html+='<th>Seleção</th><th>Código</th><th>Grupo</th><th>Coladas</th><th>%</th><th>Repetidas</th>';
+  else if(tipo==='repetidas') html+='<th>Seleção</th><th>Código</th><th>Grupo</th><th>Figurinha</th><th>Qtd</th>';
+  else html+='<th>Seleção</th><th>Código</th><th>Grupo</th><th>Figurinha</th>';
+  html+='</tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div class="ftr">Álbum Copa 2026 · Panini · '+now+'</div></body></html>';
+
+  // Download do HTML para impressão (window.open bloqueado no artifact do Claude)
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='album-copa-2026-'+tipo+'-'+hoje()+'.html';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+  notify('Relatório baixado! Abra o arquivo e imprima como PDF ✓','success');
+}
+
+// ─── ASSISTENTE IA ────────────────────────────────────────────────────────────
+var recognition=null,listening=false;
+function toggleVoz(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){notify('Voz não suportada','error');return;}
+  if(listening){if(recognition)recognition.stop();return;}
+  recognition=new SR();recognition.lang='pt-BR';recognition.continuous=false;recognition.interimResults=false;
+  recognition.onresult=function(e){el('ia-input').value=e.results[0][0].transcript;enviarIA();};
+  recognition.onend=function(){listening=false;el('ia-mic').classList.remove('listening');el('ia-listen').style.display='none';};
+  recognition.onerror=function(){listening=false;el('ia-mic').classList.remove('listening');el('ia-listen').style.display='none';notify('Erro de voz','error');};
+  recognition.start();listening=true;
+  el('ia-mic').classList.add('listening');el('ia-listen').style.display='block';
+}
+
+async function enviarIA(){
+  var inp=el('ia-input'),txt=inp.value.trim();if(!txt)return;
+  var btn=el('ia-send');btn.disabled=true;btn.textContent='...';
+  var re=el('ia-resp');re.style.display='none';
+  var s=stats();
+  var sys='Você é o assistente do álbum da Copa 2026.\nESTADO: '+s.uOf+'/'+TOTAL+' ('+s.pct+'%) | Envelopes: '+DB.envelopes+' | Repetidas: '+s.reps+' | Faltam: '+s.faltam
+    +'\nSEÇÕES: '+SELECOES.map(function(x){return x.id+'('+x.nome+')';}).join(', ')
+    +'\nResponda APENAS JSON sem markdown:\n{"acao":"REGISTRAR_COLADA"|"REGISTRAR_REPETIDA"|"REGISTRAR_ENVELOPES"|"CONSULTA"|"DESFAZER","selecao":"ID ou null","numeros":[...]|null,"quantidade":N|null,"resposta":"msg curta"}';
+  try{
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:[{role:'user',content:txt}]})});
+    var data=await r.json();
+    var parsed=JSON.parse((data.content&&data.content[0]?data.content[0].text:'{}').replace(/```json|```/g,'').trim());
+    re.innerHTML='<strong>Assistente:</strong> '+(parsed.resposta||'Processado.');re.style.display='block';
+    if(parsed.acao==='REGISTRAR_COLADA'&&parsed.selecao&&parsed.numeros){
+      parsed.numeros.forEach(function(n){var k=parsed.selecao+'-'+n;DB.coladas[k]=1;DB.log=[{tipo:'colada',key:k,ts:Date.now()}].concat(DB.log.slice(0,99));});
+      await salvar(DB);ui();if(selAtiva&&selAtiva.id===parsed.selecao){renderFig();renderSel();}
+    }else if(parsed.acao==='REGISTRAR_REPETIDA'&&parsed.selecao&&parsed.numeros){
+      parsed.numeros.forEach(function(n){var k=parsed.selecao+'-'+n;DB.repetidas[k]=(DB.repetidas[k]||0)+1;DB.log=[{tipo:'repetida',key:k,ts:Date.now()}].concat(DB.log.slice(0,99));});
+      await salvar(DB);ui();if(selAtiva&&selAtiva.id===parsed.selecao){renderFig();renderSel();}
+    }else if(parsed.acao==='REGISTRAR_ENVELOPES'&&parsed.quantidade){DB.envelopes+=parsed.quantidade;await salvar(DB);ui();}
+    else if(parsed.acao==='DESFAZER')desfazer();
+    inp.value='';
+  }catch(err){re.innerHTML='<strong>Assistente:</strong> Não entendi.';re.style.display='block';}
+  btn.disabled=false;btn.textContent='Enviar';
+}
+
+// ─── DIAGNÓSTICO STORAGE ──────────────────────────────────────────────────────
+async function diagStorage(){
+  var e=el('diag-lista');if(!e)return;
+  e.innerHTML='<div style="color:var(--text3);font-size:.78rem;padding:4px">Verificando...</div>';
+  var res=[];
+  for(var i=0;i<CHAVES.length;i++){
+    var d=parse(await wsGet(CHAVES[i]));
+    if(d){var t=Object.keys(d.coladas||{}).filter(function(k){return d.coladas[k];}).length;res.push({o:'☁️ Claude',k:CHAVES[i],t:t,r:Object.values(d.repetidas||{}).reduce(function(a,b){return a+b;},0),e:d.envelopes||0});}
+  }
+  try{for(var i=0;i<localStorage.length;i++){var chave=localStorage.key(i);try{var d=parse(localStorage.getItem(chave));if(d&&d.coladas){var t=Object.keys(d.coladas).filter(function(k){return d.coladas[k];}).length;res.push({o:'📱 Local',k:chave,t:t,r:Object.values(d.repetidas||{}).reduce(function(a,b){return a+b;},0),e:d.envelopes||0});}}catch(ex){}}
+  }catch(ex){}
+  if(!res.length){e.innerHTML='<div style="color:var(--text4);font-size:.8rem;padding:8px">Nenhum dado encontrado.</div>';return;}
+  e.innerHTML=res.map(function(it){
+    var btn=it.t>0?'<button onclick="recuperarDe(\''+it.o+'\',\''+it.k+'\')" style="background:var(--gold);border:none;color:#000;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.72rem;font-weight:700;margin-left:8px;white-space:nowrap">Restaurar</button>':'';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'
+      +'<div><div style="font-size:.75rem;color:var(--text);font-weight:600">'+it.o+' · <span style="color:var(--text3)">'+it.k+'</span></div>'
+      +'<div style="font-size:.68rem;color:var(--text3);margin-top:1px">'+it.t+' coladas · '+it.r+' repetidas · '+it.e+' envelopes</div></div>'+btn+'</div>';
+  }).join('');
+}
+
+async function recuperarDe(origem,chave){
+  var raw=origem.includes('Claude')?await wsGet(chave):lsGet(chave);
+  var d=parse(raw);
+  if(!d){notify('Não encontrado','error');return;}
+  var t=Object.keys(d.coladas||{}).filter(function(k){return d.coladas[k];}).length;
+  if(!confirm('Restaurar '+t+' figurinhas de "'+chave+'"?'))return;
+  DB={coladas:d.coladas||{},repetidas:d.repetidas||{},envelopes:d.envelopes||0,log:d.log||[],ultimoSalvo:Date.now()};
+  await salvar(DB);ui();diagStorage();if(selAtiva){renderFig();renderSel();}notify('Restaurado ✓','success');
+}
+
+// ─── NOTIFICAÇÃO ──────────────────────────────────────────────────────────────
+var notifTimer=null;
+function notify(msg,type){
+  var n=el('notif');n.textContent=msg;n.className=(type||'success')+' show';
+  if(notifTimer)clearTimeout(notifTimer);
+  notifTimer=setTimeout(function(){n.classList.remove('show');},2800);
+}
+
+iniciar();
+
+</script>
+</body>
+</html>
