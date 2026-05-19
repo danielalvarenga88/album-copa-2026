@@ -172,6 +172,7 @@
       <!-- Registrar envelopes -->
       <div class="card">
         <div class="card-title">Registrar Envelopes Abertos</div>
+        <div style="font-size:.65rem;color:var(--text3);margin-bottom:6px">Adicionar:</div>
         <div class="env-row">
           <button class="env-btn" onclick="regEnv(1)">+1</button>
           <button class="env-btn" onclick="regEnv(2)">+2</button>
@@ -180,6 +181,15 @@
           <button class="env-btn" onclick="regEnv(10)">+10</button>
           <input class="env-input" id="env-custom" type="number" min="1" value="1"/>
           <button class="env-ok" onclick="regEnvCustom()">OK</button>
+        </div>
+        <div style="font-size:.65rem;color:var(--text3);margin:8px 0 6px">Remover (clique errado):</div>
+        <div class="env-row">
+          <button class="env-btn" style="background:rgba(233,69,96,0.08);border-color:rgba(233,69,96,0.2);color:#c0392b" onclick="remEnv(1)">−1</button>
+          <button class="env-btn" style="background:rgba(233,69,96,0.08);border-color:rgba(233,69,96,0.2);color:#c0392b" onclick="remEnv(2)">−2</button>
+          <button class="env-btn" style="background:rgba(233,69,96,0.08);border-color:rgba(233,69,96,0.2);color:#c0392b" onclick="remEnv(3)">−3</button>
+          <button class="env-btn" style="background:rgba(233,69,96,0.08);border-color:rgba(233,69,96,0.2);color:#c0392b" onclick="remEnv(5)">−5</button>
+          <input class="env-input" id="env-custom-rem" type="number" min="1" value="1"/>
+          <button class="env-ok" style="background:#c0392b" onclick="remEnvCustom()">OK</button>
         </div>
       </div>
 
@@ -412,7 +422,7 @@ function stats(){
   var faltam=TOTAL-uOf;
   var proj=gasto+(faltam*FIG_P*3.2);
   var compradas=DB.envelopes*7;
-  var registradas=uOf+uCC+reps;
+  var registradas=uOf+reps; // CC excluída (não vem em envelopes)
   return{uOf:uOf,uCC:uCC,reps:reps,pct:pct,gasto:gasto,faltam:faltam,proj:proj,
     compradas:compradas,registradas:registradas,diff:compradas-registradas,
     efic:registradas>0?(((uOf+uCC)/registradas)*100).toFixed(1):'—'};
@@ -466,7 +476,7 @@ function uiDoubleCheck(s){
         +(s.diff>0?'Você tem '+s.diff+' figurinhas não lançadas. Registre como colada ou repetida.':'Há mais registros do que figurinhas compradas. Verifique os envelopes.')
       +'</div>':'')
     +'<div style="font-size:.6rem;color:var(--text4);margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px">'
-      +'Col. oficiais: '+s.uOf+' · CC: '+s.uCC+' · Repetidas: '+s.reps
+      +'Col. oficiais: '+s.uOf+' · Repetidas: '+s.reps+' · CC não contabilizada (vem pelo rótulo)'
     +'</div>';
 }
 
@@ -694,8 +704,14 @@ async function ajustarRep(key,selId,num,delta){
 }
 
 // ─── ENVELOPES / DESFAZER ─────────────────────────────────────────────────────
-async function regEnv(q){DB.envelopes+=q;await salvar(DB);ui();notify(q+' envelope(s) registrado(s)','success');}
+async function regEnv(q){DB.envelopes+=q;await salvar(DB);ui();notify(q+' envelope(s) adicionado(s)','success');}
 function regEnvCustom(){var q=parseInt(el('env-custom').value)||1;if(q>0)regEnv(q);}
+async function remEnv(q){
+  if(DB.envelopes<=0){notify('Já está em zero','warn');return;}
+  DB.envelopes=Math.max(0,DB.envelopes-q);
+  await salvar(DB);ui();notify(q+' envelope(s) removido(s)','warn');
+}
+function remEnvCustom(){var q=parseInt(el('env-custom-rem').value)||1;if(q>0)remEnv(q);}
 async function desfazer(){
   if(!DB.log.length)return;
   var u=DB.log[0];DB.log=DB.log.slice(1);
